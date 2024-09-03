@@ -6,7 +6,6 @@ def main():
     scraper = Scraper(url=URL, headless=HEADLESS)
     day, exercises = scraper.scrape()
     
-    print(day)
     sheet = Sheet()
     sheets = sheet.spreadsheet.worksheets()
     
