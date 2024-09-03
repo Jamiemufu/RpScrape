@@ -18,11 +18,32 @@ class Sheet:
     def get_sreadsheet(self):
         return self.spreadsheet
     
-    def get_worksheet(self):
+    def get_worksheet(self, title=None):
         return self.worksheet
     
-    def get_cell(self, cell):
-        return self.worksheet.acell(cell).value
+    def clear_sheet(self):
+        self.worksheet.clear()
+        print("Worksheet cleared successfully.")
+        
+    def get_all_values(self):
+        return self.worksheet.get_all_values()
     
+    def create_worksheet(self, title, rows=1, cols=1):
+        self.spreadsheet.add_worksheet(title, rows, cols)
+        print(f"Worksheet '{title}' created successfully.")
     
+    def update_exercises(self, exercises):
+        worksheet = self.get_worksheet()
+
+        # Convert exercises to a list of lists
+        data = []
+        for exercise in exercises:
+            data.append([exercise.get_name(), exercise.get_set_number()])
+        
+       # Update the worksheet with the exercise data
+       
+        worksheet.update('A1', [['Exercise', 'Number of Sets', 'Ryan', 'Jamie']])
+        worksheet.update('A2', data)
+        
+        print("Exercises updated successfully.")
 
