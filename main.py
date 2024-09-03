@@ -1,19 +1,23 @@
-# main.py
-
 from scraper import Scraper
 from sheet import Sheet
 from config import URL, HEADLESS
 
 def main():
     scraper = Scraper(url=URL, headless=HEADLESS)
-    data = scraper.scrape()
-    day = data[0]
-    exercises = data[1]
+    day, exercises = scraper.scrape()
+    
     sheet = Sheet()
-    sheet.create_worksheet(day, rows=len(exercises), cols=4)
-    # select the newly created worksheet
+    sheets = sheet.spreadsheet.worksheets()
+    
+     # if the day already exists, clear the sheet
+    if day in [sheet.title for sheet in sheets]:
+        sheet.worksheet = sheet.spreadsheet.worksheet(day)
+        sheet.clear_sheet()
+    # if the day does not exist, create a new worksheet
+    else:
+        sheet.create_worksheet(day, rows=len(exercises), cols=4)
+    
     sheet.worksheet = sheet.spreadsheet.worksheet(day)
-    sheet.clear_sheet()
     sheet.update_exercises(exercises)
 
 if __name__ == "__main__":
