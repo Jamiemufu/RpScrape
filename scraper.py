@@ -12,20 +12,25 @@ class Scraper:
     TAG_NAME_EXERCISE = 'h3'
     TAG_NAME_LIST_ITEM = 'li'
     
-    def __init__(self, url, headless=True):
+    def __init__(self, url, headless=True, user_profile=""):
         self.url = url
-        self.driver = self._initialize_driver(headless)
+        self.driver = self._initialize_driver(headless, user_profile)
     
-    def _initialize_driver(self, headless):
+    def _initialize_driver(self, headless, user_profile):
         chrome_options = Options()
+        chrome_options.add_argument("--disable-extensions")
+        # add your own path to the Chrome user data directory
+        # this uses my curret chrome profile
+        chrome_options.add_argument("--user-data-dir=" + user_profile)
         if headless:
             chrome_options.add_argument("--headless")
+            
         driver = webdriver.Chrome(options=chrome_options)
         return driver
 
     def _close_modal(self):
         try:
-            wait = WebDriverWait(self.driver, 30)
+            wait = WebDriverWait(self.driver, 5)
             close_button = wait.until(EC.element_to_be_clickable((By.XPATH, self.XPATH_CLOSE_MODAL)))
             close_button.click()
         except Exception as e:
@@ -37,7 +42,7 @@ class Scraper:
     
     def _get_exercises(self):
         exercises = []
-        wait = WebDriverWait(self.driver, 30)
+        wait = WebDriverWait(self.driver, 10)
         exercise_elements = wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, self.TAG_NAME_EXERCISE)))
 
         for element in exercise_elements:
