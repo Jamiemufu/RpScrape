@@ -24,20 +24,21 @@ class Scraper:
         chrome_options.add_argument("--user-data-dir=" + user_profile)
         if headless:
             chrome_options.add_argument("--headless")
-            
         driver = webdriver.Chrome(options=chrome_options)
         return driver
 
     def _close_modal(self):
         try:
-            wait = WebDriverWait(self.driver, 5)
+            wait = WebDriverWait(self.driver, 30)
             close_button = wait.until(EC.element_to_be_clickable((By.XPATH, self.XPATH_CLOSE_MODAL)))
             close_button.click()
         except Exception as e:
             print(f"Error closing modal: {e}")
             
     def _get_day(self):
-        day_element = self.driver.find_element(By.XPATH, self.XPATH_DAY)
+        # wait for the day element to load due to reload
+        wait = WebDriverWait(self.driver, 30)
+        day_element = wait.until(EC.presence_of_element_located((By.XPATH, self.XPATH_DAY)))
         return " ".join(day_element.text.split()[:-1])
     
     def _get_exercises(self):
@@ -64,7 +65,7 @@ class Scraper:
 
     def scrape(self):
         self.driver.get(self.url)
-        self._close_modal()
+        # self._close_modal()
         day = self._get_day()
         exercises = self._get_exercises()
         self.driver.quit()
