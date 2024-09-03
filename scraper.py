@@ -33,7 +33,7 @@ class Scraper:
             
     def _get_day(self):
         day_element = self.driver.find_element(By.XPATH, self.XPATH_DAY)
-        return " ".join(day_element.text.split())
+        return " ".join(day_element.text.split()[:-1])
     
     def _get_exercises(self):
         exercises = []
