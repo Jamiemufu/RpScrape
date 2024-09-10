@@ -65,7 +65,7 @@ class Scraper:
                     # using relative XPATH to get the input element disguised as a div...
                     set = set_element.find_element(By.XPATH, '//DIV[1]/../..//input')
                     reps = inputs[0]
-                    exercise.add_set(weight=set, reps=reps.get_attribute('placeholder'))
+                    exercise.add_set(weight=set.text, reps=reps.get_attribute('placeholder'))
                 exercises.append(exercise)
 
         for element in exercise_elements:
