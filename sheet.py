@@ -37,7 +37,7 @@ class Sheet:
                 # Add exercise name only in the first row of its sets
                 name = exercise.name if i == 0 else ''
                 # Each set will have the name, number of sets, weight, and reps
-                row = [name, i+1, 'kg', '0', 'kg', '0', 'MASSIVE GAINS']
+                row = [name, i+1, '0', '0', '0', '0', 'MASSIVE GAINS']
                 data.append(row)
         
         # Update the worksheet starting from cell A1
