@@ -9,7 +9,9 @@ class Scraper:
     XPATH_CLOSE_MODAL = '/html/body/div[2]/div/div/div/div[2]/div/div/div/button'
     XPATH_DAY = '/html/body/div[1]/div/div/main/div/div/div/div[1]/div/div[1]/h2'
     PARENT_XPATH = '../..'
+    BODY_WEIGHT_XPATH = '../../../..'
     TAG_NAME_EXERCISE = 'h3'
+    BODY_WEIGHT_EXERCISE = 'h4'
     TAG_NAME_LIST_ITEM = 'li'
     
     def __init__(self, url, headless=True, user_profile=""):
@@ -45,6 +47,26 @@ class Scraper:
         exercises = []
         wait = WebDriverWait(self.driver, 10)
         exercise_elements = wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, self.TAG_NAME_EXERCISE)))
+        body_weight_elements = wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, self.BODY_WEIGHT_EXERCISE)))
+        
+        #TODO: refactor this - this is horrid!
+        for element in body_weight_elements:
+            if "bodyweight" in element.text.lower():
+                exercise_name = element.find_element(By.XPATH, '//h3').text
+                exercise = Exercise(name=exercise_name)
+                
+                parent = element.find_element(By.XPATH, self.PARENT_XPATH)
+                sets = parent.find_elements(By.TAG_NAME, self.TAG_NAME_LIST_ITEM)
+                
+                for set_element in sets:
+                    # first input is NOT an input for bodyweight exercises
+                    # second input is the placeholder for reps
+                    inputs = set_element.find_elements(By.TAG_NAME, 'input')
+                    # using relative XPATH to get the input element disguised as a div...
+                    set = set_element.find_element(By.XPATH, '//DIV[1]/../..//input')
+                    reps = inputs[0]
+                    exercise.add_set(weight=set, reps=reps.get_attribute('placeholder'))
+                exercises.append(exercise)
 
         for element in exercise_elements:
             exercise_name = element.text
